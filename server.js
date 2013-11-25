@@ -1,13 +1,12 @@
 #!/bin/env node
 //  OpenShift sample Node application
-var express = require('express');
-var fs      = require('fs');
-
+var express    = require('express');
+var fs         = require('fs');
 
 /**
  *  Define the sample application.
  */
-var SampleApp = function() {
+var PlaygroundApp = function() {
 
     //  Scope.
     var self = this;
@@ -93,17 +92,9 @@ var SampleApp = function() {
      *  Create the routing table entries + handlers for the application.
      */
     self.createRoutes = function() {
-        self.routes = { };
-
-        self.routes['/asciimo'] = function(req, res) {
-            var link = "http://i.imgur.com/kmbjB.png";
-            res.send("<html><body><img src='" + link + "'></body></html>");
-        };
-
-        self.routes['/'] = function(req, res) {
-            res.setHeader('Content-Type', 'text/html');
-            res.send(self.cache_get('index.html') );
-        };
+        // Load all routes.
+        require('./routes')(self.app);
+        
     };
 
 
@@ -112,13 +103,9 @@ var SampleApp = function() {
      *  the handlers.
      */
     self.initializeServer = function() {
+        self.app = express();
         self.createRoutes();
-        self.app = express.createServer();
-
-        //  Add handlers for the app (from the routes).
-        for (var r in self.routes) {
-            self.app.get(r, self.routes[r]);
-        }
+        
     };
 
 
@@ -153,7 +140,7 @@ var SampleApp = function() {
 /**
  *  main():  Main code.
  */
-var zapp = new SampleApp();
+var zapp = new PlaygroundApp();
 zapp.initialize();
 zapp.start();
 
